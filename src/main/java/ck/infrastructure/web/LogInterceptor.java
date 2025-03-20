@@ -18,19 +18,17 @@ import java.util.Objects;
 public class LogInterceptor  implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response,@NonNull  Object handler) throws Exception {
-        if(handler instanceof HandlerMethod handlerMethod && handlerMethod.hasMethodAnnotation(NoLog.class)) {
-            return true;
-        }
         String requestId = request.getHeader("requestId");
         new NotBlankValidator(requestId , new ForbiddenException()).run();
         String traceId = request.getHeader("traceId");
         new NotBlankValidator(traceId , new ForbiddenException()).run();
-        new EqualsValidator<>(traceId, request.getSession().getAttribute("traceId"), new ForbiddenException()).run();
-        MDC.put("requestId", requestId);
-        MDC.put("traceId", traceId);
         if(Objects.isNull(request.getSession().getAttribute("traceId"))) {
             request.getSession().setAttribute("traceId", traceId);
         }
+        new EqualsValidator<>(traceId, request.getSession().getAttribute("traceId"), new ForbiddenException()).run();
+        MDC.put("requestId", requestId);
+        MDC.put("traceId", traceId);
+
         return true;
     }
 

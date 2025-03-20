@@ -1,20 +1,19 @@
 package ck.infrastructure.safety;
 
 import ck.infrastructure.notify.INotifyService;
-import ck.infrastructure.validator.NotNullValidator;
 import lombok.Cleanup;
-import lombok.Getter;
 import lombok.SneakyThrows;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
@@ -29,13 +28,16 @@ public class RSAKIt {
     private final INotifyService notifyService;
     public RSAKIt(INotifyService notifyService) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         this.notifyService = notifyService;
+
+        this.notifyService.info("密钥位置 {}", System.getProperty("user.home") + "/private.key");
         @Cleanup
-        InputStream in2 = getClass().getResourceAsStream("/private.key");
-        new NotNullValidator<>(in2, new IllegalArgumentException("无法获取公钥")).run();
-        assert in2 != null;
-        String privateKeyPEM = new String(in2.readAllBytes()).replaceAll("\n","");
+        BufferedInputStream br = new BufferedInputStream(new FileInputStream(System.getProperty("user.home") + "/private.key"));
+        String key = new String(br.readAllBytes());
+        key = key.replaceAll("-----BEGIN PRIVATE KEY-----", "");
+        key = key.replaceAll("-----END PRIVATE KEY-----", "");
+        key = key.replaceAll("\n", "").trim();
         keyFactory = KeyFactory.getInstance("RSA");
-        byte[] encoded = Base64.getDecoder().decode(privateKeyPEM);
+        byte[] encoded = Base64.getDecoder().decode(key);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
         privateKey = (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
     }

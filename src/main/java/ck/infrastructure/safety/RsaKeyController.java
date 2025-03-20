@@ -1,18 +1,16 @@
 package ck.infrastructure.safety;
 
-import ck.infrastructure.exception.ForbiddenException;
-import ck.infrastructure.validator.EqualsValidator;
 import ck.infrastructure.web.ApiResponse;
-import ck.infrastructure.web.NoLog;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -22,7 +20,9 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 /**
  * RSA密钥控制器
@@ -33,7 +33,6 @@ import java.util.*;
 public class RsaKeyController {
     private final RSAKIt rsakIt;
     @NoEncrypted
-    @NoLog
     @Operation(summary = "下载RSA公钥")
     @PostMapping(value = "/rsa/public.key", produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String rsaPublicKey(){
@@ -43,7 +42,6 @@ public class RsaKeyController {
 
 
     @NoEncrypted
-    @NoLog
     @Operation(summary = "测试加密请求体, 只能用于测试")
     @PostMapping(value = "/aes/key/encrypt", produces = {MediaType.APPLICATION_JSON_VALUE},consumes = {MediaType.TEXT_PLAIN_VALUE})
     public ApiResponse<List<String>> aesEncrypt(

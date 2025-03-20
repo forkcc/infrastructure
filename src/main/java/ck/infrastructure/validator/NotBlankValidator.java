@@ -1,7 +1,6 @@
 package ck.infrastructure.validator;
 
 import lombok.AllArgsConstructor;
-import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
