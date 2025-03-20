@@ -57,7 +57,5 @@ public class RsaKeyController {
         byte[] decryptedBytes = cipher.doFinal(body.getBytes(StandardCharsets.UTF_8));
         strings.add(Base64.getEncoder().encodeToString(decryptedBytes));
         return ApiResponse.ok(strings);
-
     }
-
 }

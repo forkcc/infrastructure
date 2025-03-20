@@ -1,6 +1,7 @@
 package ck.infrastructure.notify.impl;
 
 import ck.infrastructure.notify.INotifyService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -30,5 +31,10 @@ public class NotifyServiceImpl implements INotifyService {
     @Override
     public void info(String message, Object... args) {
         log.info(message, args);
+    }
+
+    @Override
+    public void callTime(long time, HttpServletRequest request) {
+
     }
 }

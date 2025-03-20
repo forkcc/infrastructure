@@ -1,5 +1,7 @@
 package ck.infrastructure.notify;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 /**
  * 通知接口
  */
@@ -21,4 +23,9 @@ public interface INotifyService {
      * 正常信息
      */
     void info(String message, Object... args);
+
+    /**
+     * 接口预警
+     */
+    void callTime(long time, HttpServletRequest request);
 }
