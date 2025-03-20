@@ -12,6 +12,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -44,10 +45,7 @@ public class CallTimeAspect {
             long end = System.currentTimeMillis();
             //如果接口运行时间超过300ms就预警
             if(end - start > 300){
-                notifyService.callTime(end-start, request,
-                        objectMapper.writeValueAsString(Optional.ofNullable(joinPoint.getArgs()).orElse(new Object[0])),
-                        objectMapper.writeValueAsString(Optional.ofNullable(result).orElse(new Object()))
-                );
+                notifyService.callTime(end-start, MDC.get("requestId"));
             }
         }
     }

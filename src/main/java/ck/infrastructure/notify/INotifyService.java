@@ -27,5 +27,5 @@ public interface INotifyService {
     /**
      * 接口预警
      */
-    void callTime(long time, HttpServletRequest request, String body, String result);
+    void callTime(long time, String uuid);
 }
