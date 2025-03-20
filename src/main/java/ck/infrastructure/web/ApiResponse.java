@@ -40,4 +40,11 @@ public class ApiResponse<E> {
     public static ApiResponse<Void> unauthorized() {
         return ApiResponse.<Void>builder().code(401).build();
     }
+
+    /**
+     * 错误通知
+     */
+    public static ApiResponse<Void> error() {
+        return ApiResponse.<Void>builder().code(500).build();
+    }
 }

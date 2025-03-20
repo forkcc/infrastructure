@@ -1,5 +1,6 @@
 package ck.infrastructure.exception;
 
+import ck.infrastructure.notify.INotifyService;
 import ck.infrastructure.web.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    private INotifyService notifyService;
 
     @ResponseBody
     @ExceptionHandler
@@ -35,5 +37,11 @@ public class GlobalExceptionHandler {
     public ApiResponse<Void> exception(UnauthorizedException e){
         return ApiResponse.unauthorized();
     }
-
+    @ResponseBody
+    @ExceptionHandler
+    @ResponseStatus(code = HttpStatus.OK)
+    public ApiResponse<Void> exception(Exception e){
+        notifyService.error(e);
+        return ApiResponse.error();
+    }
 }
