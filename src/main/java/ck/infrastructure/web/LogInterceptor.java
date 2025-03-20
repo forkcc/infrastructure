@@ -21,7 +21,7 @@ public class LogInterceptor  implements HandlerInterceptor {
         new NotBlankValidator(requestId , new ForbiddenException()).run();
         String traceId = request.getHeader("traceId");
         new NotBlankValidator(traceId , new ForbiddenException()).run();
-        new NotEqualsValidator(traceId, request.getSession().getAttribute("traceId"), new ForbiddenException()).run();
+        new NotEqualsValidator<>(traceId, request.getSession().getAttribute("traceId"), new ForbiddenException()).run();
         MDC.put("requestId", requestId);
         MDC.put("traceId", traceId);
         if(Objects.isNull(request.getSession().getAttribute("traceId"))) {
