@@ -40,14 +40,14 @@ public class RsaKeyController {
     }
 
 
-
+    @Deprecated
     @NoEncrypted
     @Operation(summary = "测试加密请求体, 只能用于测试")
     @PostMapping(value = "/aes/key/encrypt", produces = {MediaType.APPLICATION_JSON_VALUE},consumes = {MediaType.TEXT_PLAIN_VALUE})
     public ApiResponse<List<String>> aesEncrypt(
             @Schema(example = "需要加密的内容填这里")
             @RequestBody String body,
-            @RequestParam @Parameter(description = "AES的Key, 必须16位") String aesKey) throws InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException {
+            @RequestParam @Parameter(description = "AES的Key,必须16位,无需加密") String aesKey) throws InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException {
         List<String> strings = new ArrayList<>();
         strings.add(rsakIt.encrypt(aesKey));
         SecretKeySpec secretKey = new SecretKeySpec(aesKey.getBytes(), "AES");
