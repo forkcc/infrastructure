@@ -7,7 +7,7 @@ import java.util.Objects;
  * 相等校验器
  */
 @AllArgsConstructor
-public class NotEqualsValidator<E> implements Runnable{
+public class EqualsValidator<E> implements Runnable{
     private final E object1;
     private final E object2;
     private final RuntimeException exception;

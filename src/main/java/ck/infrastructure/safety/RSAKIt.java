@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.Cipher;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -43,5 +44,12 @@ public class RSAKIt {
         RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(privateKey.getModulus(), publicExponent);
         PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
         return Base64.getEncoder().encodeToString(publicKey.getEncoded());
+    }
+    @SneakyThrows
+    public String decrypt(String encryptedText){
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
+        return new String(cipher.doFinal(encryptedBytes));
     }
 }

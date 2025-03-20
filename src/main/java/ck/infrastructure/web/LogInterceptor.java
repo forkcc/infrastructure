@@ -1,8 +1,8 @@
 package ck.infrastructure.web;
 
 import ck.infrastructure.exception.ForbiddenException;
+import ck.infrastructure.validator.EqualsValidator;
 import ck.infrastructure.validator.NotBlankValidator;
-import ck.infrastructure.validator.NotEqualsValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;
@@ -21,7 +21,7 @@ public class LogInterceptor  implements HandlerInterceptor {
         new NotBlankValidator(requestId , new ForbiddenException()).run();
         String traceId = request.getHeader("traceId");
         new NotBlankValidator(traceId , new ForbiddenException()).run();
-        new NotEqualsValidator<>(traceId, request.getSession().getAttribute("traceId"), new ForbiddenException()).run();
+        new EqualsValidator<>(traceId, request.getSession().getAttribute("traceId"), new ForbiddenException()).run();
         MDC.put("requestId", requestId);
         MDC.put("traceId", traceId);
         if(Objects.isNull(request.getSession().getAttribute("traceId"))) {
