@@ -12,6 +12,10 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
+
+/**
+ * 用于计算接口访问时间，对慢接口预警
+ */
 @Slf4j
 @Aspect
 @Component
