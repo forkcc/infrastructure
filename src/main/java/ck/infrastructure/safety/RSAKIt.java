@@ -11,6 +11,7 @@ import javax.crypto.Cipher;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -51,5 +52,14 @@ public class RSAKIt {
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] encryptedBytes = Base64.getDecoder().decode(encryptedText);
         return new String(cipher.doFinal(encryptedBytes));
+    }
+    @SneakyThrows
+    public String encrypt(String text){
+        BigInteger publicExponent = java.math.BigInteger.valueOf(65537);
+        RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(privateKey.getModulus(), publicExponent);
+        PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        return Base64.getEncoder().encodeToString(cipher.doFinal(text.getBytes(StandardCharsets.UTF_8)));
     }
 }

@@ -2,6 +2,8 @@ package ck.infrastructure.safety;
 
 import ck.infrastructure.exception.ForbiddenException;
 import ck.infrastructure.validator.EqualsValidator;
+import ck.infrastructure.web.ApiResponse;
+import ck.infrastructure.web.NoLog;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,10 +12,17 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 /**
  * RSA密钥控制器
@@ -23,22 +32,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RsaKeyController {
     private final RSAKIt rsakIt;
+    @NoEncrypted
+    @NoLog
     @Operation(summary = "下载RSA公钥")
-    @PostMapping(value = "rsa/public.key", produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/rsa/public.key", produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String rsaPublicKey(){
         return rsakIt.getPublicKey();
     }
-    @Operation(summary = "测试加密后AES的Key")
-    @PostMapping(value = "aes/key/test")
-    public void aesKeyTest(@RequestBody AesKeyTest  aesKeyTest){
-        new EqualsValidator<>(aesKeyTest.aesKeyOrigin, rsakIt.decrypt(aesKeyTest.aesKeyEncrypted), new ForbiddenException()).run();
+
+
+
+    @NoEncrypted
+    @NoLog
+    @Operation(summary = "测试加密请求体, 只能用于测试")
+    @PostMapping(value = "/aes/key/encrypt", produces = {MediaType.APPLICATION_JSON_VALUE},consumes = {MediaType.TEXT_PLAIN_VALUE})
+    public ApiResponse<List<String>> aesEncrypt(
+            @Schema(example = "需要加密的内容填这里")
+            @RequestBody String body,
+            @RequestParam @Parameter(description = "AES的Key, 必须16位") String aesKey) throws InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException {
+        List<String> strings = new ArrayList<>();
+        strings.add(rsakIt.encrypt(aesKey));
+        SecretKeySpec secretKey = new SecretKeySpec(aesKey.getBytes(), "AES");
+        // 创建 Cipher 对象进行 AES 解密
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        byte[] decryptedBytes = cipher.doFinal(body.getBytes(StandardCharsets.UTF_8));
+        strings.add(Base64.getEncoder().encodeToString(decryptedBytes));
+        return ApiResponse.ok(strings);
+
     }
 
-    @Data
-    public static class AesKeyTest{
-        @Schema(description = "测试的原始密码", requiredMode = Schema.RequiredMode.REQUIRED)
-        private String aesKeyOrigin;
-        @Schema(description = "测试的加密密码, Base64编码", requiredMode = Schema.RequiredMode.REQUIRED)
-        private String aesKeyEncrypted;
-    }
 }

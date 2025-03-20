@@ -2,6 +2,7 @@ package ck.infrastructure.exception;
 
 import ck.infrastructure.notify.INotifyService;
 import ck.infrastructure.web.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,8 +15,9 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
  * 全局异常拦截器
  */
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    private INotifyService notifyService;
+    private final INotifyService notifyService;
 
     @ResponseBody
     @ExceptionHandler

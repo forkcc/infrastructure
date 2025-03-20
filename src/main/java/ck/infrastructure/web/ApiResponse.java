@@ -29,6 +29,12 @@ public class ApiResponse<E> {
         return ApiResponse.<Void>builder().code(200).build();
     }
     /**
+     * 成功
+     */
+    public static <E>ApiResponse<E> ok(E e) {
+        return ApiResponse.<E>builder().code(200).data(e).build();
+    }
+    /**
      * 访问拒绝
      */
     public static ApiResponse<Void> forbidden() {

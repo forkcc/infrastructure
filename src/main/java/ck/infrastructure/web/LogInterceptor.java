@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;
 import org.springframework.lang.NonNull;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Objects;
@@ -17,6 +18,9 @@ import java.util.Objects;
 public class LogInterceptor  implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response,@NonNull  Object handler) throws Exception {
+        if(handler instanceof HandlerMethod handlerMethod && handlerMethod.hasMethodAnnotation(NoLog.class)) {
+            return true;
+        }
         String requestId = request.getHeader("requestId");
         new NotBlankValidator(requestId , new ForbiddenException()).run();
         String traceId = request.getHeader("traceId");
