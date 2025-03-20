@@ -90,5 +90,19 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/rsa/dev</directory>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+	</profiles>
 </project>

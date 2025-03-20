@@ -30,7 +30,7 @@ public class RSAKIt {
     public RSAKIt(INotifyService notifyService) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         this.notifyService = notifyService;
         @Cleanup
-        InputStream in2 = getClass().getResourceAsStream("/rsa/private.key");
+        InputStream in2 = getClass().getResourceAsStream("/private.key");
         new NotNullValidator<>(in2, new IllegalArgumentException("无法获取公钥")).run();
         assert in2 != null;
         String privateKeyPEM = new String(in2.readAllBytes()).replaceAll("\n","");
