@@ -38,6 +38,13 @@ public class GlobalExceptionHandler {
     public ApiResponse<Void> exception(UnauthorizedException e){
         return ApiResponse.unauthorized();
     }
+
+    @ResponseBody
+    @ExceptionHandler
+    @ResponseStatus(code = HttpStatus.OK)
+    public ApiResponse<Void> exception(BizException e){
+        return ApiResponse.error(e.getMessage());
+    }
     @ResponseBody
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.OK)

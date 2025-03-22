@@ -52,4 +52,11 @@ public class ApiResponse<E> {
     public static ApiResponse<Void> error() {
         return ApiResponse.<Void>builder().code(500).build();
     }
+
+    /**
+     * 错误通知
+     */
+    public static ApiResponse<Void> error(String message) {
+        return ApiResponse.<Void>builder().message(message).code(500).build();
+    }
 }
