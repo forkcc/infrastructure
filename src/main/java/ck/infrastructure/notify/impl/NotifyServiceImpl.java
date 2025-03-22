@@ -34,7 +34,7 @@ public class NotifyServiceImpl implements INotifyService {
     }
 
     @Override
-    public void callTime(long time, HttpServletRequest request, String body, String result) {
+    public void callTime(long time, String uuid) {
 
     }
 }
