@@ -28,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public HttpSessionIdResolver httpSessionIdResolver() {
-        return HeaderHttpSessionIdResolver.xAuthToken();
+        return new HeaderHttpSessionIdResolver("traceId");
     }
 
     public OperationCustomizer operationCustomizer(boolean aesEnabled) {
