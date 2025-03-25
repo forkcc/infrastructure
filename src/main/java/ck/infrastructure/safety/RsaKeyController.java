@@ -19,6 +19,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -36,7 +37,10 @@ public class RsaKeyController {
     @Operation(summary = "下载RSA公钥")
     @PostMapping(value = "/rsa/public.key", produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String rsaPublicKey(){
-        return rsakIt.getPublicKey();
+        KeyPair keyPair = rsakIt.generateKeyPair();
+        rsakIt.savePrivateKey(keyPair);
+        rsakIt.savePublicKey(keyPair);
+        return Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
     }
 
 

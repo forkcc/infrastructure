@@ -37,16 +37,11 @@ public class CallTimeAspect {
     @Around("postMappingMethods()")
     public Object aroundMethod(ProceedingJoinPoint joinPoint) throws Throwable{
         long start = System.currentTimeMillis();
-        Object result = null;
         try{
-            result =  joinPoint.proceed(joinPoint.getArgs());
-            return result;
+            return   joinPoint.proceed(joinPoint.getArgs());
         }finally {
             long end = System.currentTimeMillis();
-            //如果接口运行时间超过300ms就预警
-            if(end - start > 300){
-                notifyService.callTime(end-start, MDC.get("requestId"));
-            }
+            notifyService.callTime(end-start, MDC.get("requestId"));
         }
     }
 }

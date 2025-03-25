@@ -1,0 +1,6 @@
+services:
+  infrastructure-cache:
+    image: redis:7-alpine
+    container_name: infrastructure-cache
+    ports:
+      - "6379:6379"
