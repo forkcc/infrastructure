@@ -1,12 +1,18 @@
 package ck.infrastructure.web;
 
+import ck.infrastructure.notify.INotifyService;
+import ck.infrastructure.notify.impl.NotifyServiceImpl;
 import io.swagger.v3.oas.models.parameters.HeaderParameter;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
+import org.springframework.web.context.support.ServletRequestHandledEvent;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -21,10 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/swagger-ui.html", "/swagger-ui/**", "/*/api-docs", "/*/api-docs/**", "/webjars/**");
     }
 
-    @Override
-    public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> handlers) {
-        WebMvcConfigurer.super.addReturnValueHandlers(handlers);
-    }
+
 
     @Bean
     public HttpSessionIdResolver httpSessionIdResolver() {
@@ -48,5 +51,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .addOperationCustomizer(operationCustomizer(false))
                 .packagesToScan("ck.infrastructure.safety")
                 .build();
+    }
+
+    @Bean
+    public ApplicationListener<ServletRequestHandledEvent> requestHandledEventApplicationListener(INotifyService notifyService){
+        return event -> notifyService.info("{} {} {} {} {}ms",
+                event.getMethod(),
+                event.getClientAddress(), event.getRequestUrl(), event.getStatusCode(), event.getProcessingTimeMillis());
     }
 }
