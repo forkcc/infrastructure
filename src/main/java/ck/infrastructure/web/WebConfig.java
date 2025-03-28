@@ -21,13 +21,6 @@ import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LogInterceptor())
-                .excludePathPatterns("/swagger-ui.html", "/swagger-ui/**", "/*/api-docs", "/*/api-docs/**", "/webjars/**");
-    }
-
-
 
     @Bean
     public HttpSessionIdResolver httpSessionIdResolver() {

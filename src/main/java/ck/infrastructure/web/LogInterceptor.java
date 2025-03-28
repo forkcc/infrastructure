@@ -3,21 +3,30 @@ package ck.infrastructure.web;
 import ck.infrastructure.exception.ForbiddenException;
 import ck.infrastructure.validator.EqualsValidator;
 import ck.infrastructure.validator.NotBlankValidator;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;
-import org.springframework.lang.NonNull;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * 链路日志拦截器
  */
-public class LogInterceptor  implements HandlerInterceptor {
+@Component
+public class LogInterceptor  implements Filter {
     @Override
-    public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response,@NonNull  Object handler) throws Exception {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        String url = request.getRequestURI();
+        if(url.contains("swagger-ui") || url.contains("api-docs") || url.contains("webjars")) {
+            filterChain.doFilter(servletRequest,servletResponse);
+            return;
+        }
         String requestId = request.getHeader("requestId");
         new NotBlankValidator(requestId , new ForbiddenException()).run();
         String traceId = request.getHeader("traceId");
@@ -28,12 +37,10 @@ public class LogInterceptor  implements HandlerInterceptor {
         new EqualsValidator<>(traceId, request.getSession().getAttribute("traceId"), new ForbiddenException()).run();
         MDC.put("requestId", requestId);
         MDC.put("traceId", traceId);
-
-        return true;
-    }
-
-    @Override
-    public void afterCompletion(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,@NonNull Object handler, Exception ex) throws Exception {
-        MDC.clear();
+        try{
+            filterChain.doFilter(servletRequest,servletResponse);
+        }finally {
+            MDC.clear();
+        }
     }
 }
