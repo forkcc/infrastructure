@@ -5,6 +5,7 @@ import ck.infrastructure.notify.impl.NotifyServiceImpl;
 import io.swagger.v3.oas.models.parameters.HeaderParameter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.ApplicationListener;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
+import java.util.Optional;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -44,8 +46,17 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public ApplicationListener<ServletRequestHandledEvent> requestHandledEventApplicationListener(INotifyService notifyService){
-        return event -> notifyService.info("{} {} {} {} {}ms",
-                event.getMethod(),
-                event.getClientAddress(), event.getRequestUrl(), event.getStatusCode(), event.getProcessingTimeMillis());
+        return event -> {
+            if(event.getProcessingTimeMillis() > 300){
+                notifyService.warn("{} {} {} {} {}ms",
+                        event.getMethod(),
+                        event.getClientAddress(), event.getRequestUrl(), event.getStatusCode(), event.getProcessingTimeMillis());
+                notifyService.callTime(event.getProcessingTimeMillis(), Optional.ofNullable(MDC.get("requestId")).orElse(""));
+            }else{
+                notifyService.info("{} {} {} {} {}ms",
+                        event.getMethod(),
+                        event.getClientAddress(), event.getRequestUrl(), event.getStatusCode(), event.getProcessingTimeMillis());
+            }
+        };
     }
 }
