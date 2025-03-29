@@ -27,13 +27,10 @@ public class WebConfig implements WebMvcConfigurer {
         return new HeaderHttpSessionIdResolver("traceId");
     }
 
-    public OperationCustomizer operationCustomizer(boolean aesEnabled) {
+    public OperationCustomizer operationCustomizer() {
         return (operation, handlerMethod) -> {
             operation.addParametersItem(new HeaderParameter().name("traceId").description("追踪ID，每个用户都是唯一的").required(true));
             operation.addParametersItem(new HeaderParameter().name("requestId").description("请求ID，每次请求都不一样").required(true));
-            if(aesEnabled){
-                operation.addParametersItem(new HeaderParameter().name("aesKey").description("请求体AES密码，需RSA公钥加密").required(true));
-            }
             return operation;
         };
     }
@@ -41,8 +38,7 @@ public class WebConfig implements WebMvcConfigurer {
     public GroupedOpenApi groupedOpenApi(){
         return GroupedOpenApi.builder()
                 .group("默认")
-                .addOperationCustomizer(operationCustomizer(false))
-                .packagesToScan("ck.infrastructure.safety")
+                .addOperationCustomizer(operationCustomizer())
                 .build();
     }
 
