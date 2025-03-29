@@ -4,3 +4,12 @@ services:
     container_name: infrastructure-cache
     ports:
       - "6379:6379"
+  infrastructure-gateway:
+    image: uozi/nginx-ui:latest
+    container_name: infrastructure-gateway
+    volumes:
+      - ~/data/nginx:/etc/nginx
+      - ~/data/nginx-ui:/etc/nginx-ui
+    ports:
+      - "80:80"
+      - "443:443"
