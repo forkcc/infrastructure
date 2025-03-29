@@ -36,8 +36,8 @@ public class ApiResponse<E> {
     /**
      * 访问拒绝
      */
-    public static ApiResponse<Void> forbidden() {
-        return ApiResponse.<Void>builder().code(403).build();
+    public static ApiResponse<Void> forbidden(String message) {
+        return ApiResponse.<Void>builder().code(403).message(message).build();
     }
     /**
      * 需要授权

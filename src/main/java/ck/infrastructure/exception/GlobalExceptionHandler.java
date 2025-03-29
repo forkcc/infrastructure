@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(code = HttpStatus.OK)
     public ApiResponse<Void> exception(ForbiddenException e){
-        return ApiResponse.forbidden();
+        return ApiResponse.forbidden(e.getMessage());
     }
 
     @ResponseBody
