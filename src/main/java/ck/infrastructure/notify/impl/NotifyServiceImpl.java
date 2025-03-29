@@ -1,7 +1,6 @@
 package ck.infrastructure.notify.impl;
 
 import ck.infrastructure.notify.INotifyService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -13,9 +12,7 @@ public class NotifyServiceImpl implements INotifyService {
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Override
     public void error(Exception exception) {
-        threadPoolTaskExecutor.execute(()->{
-            log.error("未知异常", exception);
-        });
+        log.error("未知异常", exception);
     }
 
     @Override
